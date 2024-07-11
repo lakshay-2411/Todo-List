@@ -31,14 +31,9 @@ const item3 = new Item ({
 
 const defaultItems = [item1, item2, item3];
 
-(async function() {
-  try {
-    await Item.insertMany(defaultItems);
-    console.log("Successfully saved  default items to DB.");
-  } catch (err) {
-    console.log(err);
-  }
-})();
+/*
+
+*/
 
 app.get("/", function(req, res) {
 
@@ -47,14 +42,26 @@ app.get("/", function(req, res) {
   Item.find({})
   .then((todoItems) => {
     console.log(todoItems);
+
+    if(todoItems.length === 0){
+      (async function() {
+        try {
+          await Item.insertMany(defaultItems);
+          console.log("Successfully saved  default items to DB.");
+        } catch (err) {
+          console.log(err);
+        }
+      })();
+      res.redirect("/");
+    } else {
+      res.render("list", {
+        listTitle: day,
+        listItems: todoItems
+      });
+    }
   })
   .catch((err) => {
     console.log(err);
-  });
-
-  res.render("list", {
-    listTitle: day,
-    listItems: listItems
   });
 });
 
